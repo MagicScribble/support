@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Privacy Policy</title>
+  <script src="https://unpkg.com/i18next@21.6.14/i18next.min.js"></script>
+  <script src="https://unpkg.com/i18next-http-backend@1.4.1/i18nextHttpBackend.min.js"></script>
+  <script src="https://unpkg.com/i18next-browser-languagedetector@6.1.4/i18nextBrowserLanguageDetector.min.js"></script>
+  <style>
+    body {
+      max-width: 700px;
+      margin: auto;
+      font-family: sans-serif;
+      padding: 2em;
+      line-height: 1.6;
+    }
+    select {
+      margin-top: 1em;
+    }
+  </style>
+</head>
+<body>
+  <h1 id="title">Loading...</h1>
+  <div id="content">Loading...</div>
+
+  <label for="languageSwitcher">🌐 Language:</label>
+  <select id="languageSwitcher">
+    <option value="en">English</option>
+    <option value="fr">Français</option>
+    <option value="ja">日本語</option>
+    <option value="de">Deutsch</option>
+    <option value="ar">العربية</option>
+    <option value="ca">Català</option>
+    <option value="zh">简体中文</option>
+    <option value="zh-TW">繁體中文</option>
+    <option value="hr">Hrvatski</option>
+    <option value="cs">Čeština</option>
+    <option value="da">Dansk</option>
+    <option value="nl">Nederlands</option>
+    <option value="en-AU">English (Australia)</option>
+    <option value="en-CA">English (Canada)</option>
+    <option value="en-US">English (US)</option>
+    <option value="fi">Suomi</option>
+    <option value="el">Ελληνικά</option>
+    <option value="he">עברית</option>
+    <option value="hi">हिन्दी</option>
+    <option value="hu">Magyar</option>
+    <option value="id">Bahasa Indonesia</option>
+    <option value="it">Italiano</option>
+    <option value="ko">한국어</option>
+    <option value="ms">Bahasa Melayu</option>
+    <option value="no">Norsk</option>
+    <option value="pl">Polski</option>
+    <option value="pt">Português</option>
+    <option value="ro">Română</option>
+    <option value="ru">Русский</option>
+    <option value="sk">Slovenčina</option>
+    <option value="es">Español</option>
+    <option value="sv">Svenska</option>
+    <option value="th">ไทย</option>
+    <option value="tr">Türkçe</option>
+    <option value="uk">Українська</option>
+    <option value="vi">Tiếng Việt</option>
+  </select>
+
+  <script>
+    // Read ?lang=fr etc. from the URL
+    function getLanguageFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('lang');
+    }
+
+    // Set text direction for Arabic (rtl)
+    function updateDirection(lang) {
+      const rtlLangs = ['ar'];
+      document.documentElement.dir = rtlLangs.includes(lang) ? 'rtl' : 'ltr';
+    }
+
+    // Initialize i18next
+    i18next
+      .use(i18nextHttpBackend)
+      .use(i18nextBrowserLanguageDetector)
+      .init({
+        lng: getLanguageFromURL(), // use lang=xx from URL if present
+        fallbackLng: 'en',
+        debug: false,
+        backend: {
+          loadPath: './locales/{{lng}}.json'
+        }
+      }, function () {
+        const lang = i18next.language;
+        updateDirection(lang);
+        document.getElementById('title').innerText = i18next.t('title');
+        document.getElementById('content').innerHTML = i18next.t('content');
+        document.getElementById('languageSwitcher').value = lang;
+      });
+
+    // Handle language change from dropdown
+    document.getElementById('languageSwitcher').addEventListener('change', function () {
+      const lang = this.value;
+      i18next.changeLanguage(lang, () => {
+        updateDirection(lang);
+        document.getElementById('title').innerText = i18next.t('title');
+        document.getElementById('content').innerHTML = i18next.t('content');
+      });
+    });
+  </script>
+</body>
+</html>
